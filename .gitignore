@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Caches and build artifacts
+.pytest_cache/
+.mypy_cache/
+.cache/
+
+# Data artifacts
+data/uploads/*
+data/exports/*
+!data/uploads/.gitkeep
+!data/exports/.gitkeep
+
+# Logs
+*.log
