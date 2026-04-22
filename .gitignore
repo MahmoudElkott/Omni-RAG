@@ -4,28 +4,24 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
-
-# Virtual environments
 .venv/
 venv/
 env/
-
-# Environment files
-.env
-
-# Streamlit
-.streamlit/secrets.toml
-
-# Caches and build artifacts
 .pytest_cache/
 .mypy_cache/
-.cache/
 
-# Data artifacts
-data/uploads/*
-data/exports/*
-!data/uploads/.gitkeep
-!data/exports/.gitkeep
+# Environment
+.env
+frontend/.env.local
 
-# Logs
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+
+# ChromaDB
+chroma_db/
+
+# Logs & misc
 *.log
+.DS_Store
+Thumbs.db
