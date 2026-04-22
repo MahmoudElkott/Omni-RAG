@@ -4,12 +4,14 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/lib/store";
 import { ingestFile, ingestUrl } from "@/lib/api";
+import { KeysModal } from "./KeysModal";
 
 export function Sidebar() {
   const { mode, setMode, knowledgeScore, clearChat } = useStore();
   const [urlInput, setUrlInput] = useState("");
   const [ingesting, setIngesting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [keysOpen, setKeysOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const showToast = (msg: string) => {
@@ -190,7 +192,16 @@ export function Sidebar() {
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-4" style={{ borderTop: "1px solid var(--border)" }}>
+      <div className="px-6 py-4 space-y-2" style={{ borderTop: "1px solid var(--border)" }}>
+        <button
+          onClick={() => setKeysOpen(true)}
+          className="text-xs tracking-wider uppercase w-full text-left transition-colors"
+          style={{ color: "var(--parchment-2)" }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--amber)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--parchment-2)")}
+        >
+          ⚙ API Keys
+        </button>
         <button
           onClick={clearChat}
           className="text-xs tracking-wider uppercase w-full text-left transition-colors"
@@ -201,6 +212,8 @@ export function Sidebar() {
           Clear Session
         </button>
       </div>
+
+      <KeysModal open={keysOpen} onClose={() => setKeysOpen(false)} />
     </aside>
   );
 }
