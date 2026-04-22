@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MCQPayload } from "@/lib/store";
 import { useStore } from "@/lib/store";
 
@@ -12,95 +9,162 @@ export function MCQCard({ payload }: { payload: MCQPayload }) {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [done, setDone] = useState(false);
-  const incrementScore = useStore((s) => s.incrementScore);
+  const [score, setScore] = useState(0);
+  const incrementScore = useStore(s => s.incrementScore);
 
   const q = payload.data[current];
+  const total = payload.data.length;
 
   const choose = (idx: number) => {
     if (selected !== null) return;
     setSelected(idx);
-    if (idx === q.correct) incrementScore(10);
+    if (idx === q.correct) {
+      incrementScore(10);
+      setScore(s => s + 1);
+    }
   };
 
   const next = () => {
-    if (current + 1 >= payload.data.length) {
-      setDone(true);
-      return;
-    }
-    setCurrent((c) => c + 1);
+    if (current + 1 >= total) { setDone(true); return; }
+    setCurrent(c => c + 1);
     setSelected(null);
   };
 
   if (done) {
     return (
-      <Card className="border-green-500/30 bg-green-950/20">
-        <CardContent className="pt-6 text-center">
-          <p className="text-lg font-semibold text-green-400">Quiz Complete!</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            {payload.data.length} questions answered
-          </p>
-        </CardContent>
-      </Card>
+      <div
+        className="p-6 rounded-sm text-center"
+        style={{ background: "var(--surface)", border: "1px solid var(--border-2)" }}
+      >
+        <p className="font-display text-2xl mb-1" style={{ color: "var(--amber)" }}>
+          {score}/{total}
+        </p>
+        <p className="text-xs font-mono tracking-widest uppercase" style={{ color: "var(--parchment-3)" }}>
+          Quiz Complete
+        </p>
+        <div
+          className="mt-3 text-xs font-mono"
+          style={{ color: score === total ? "var(--emerald)" : "var(--parchment-2)" }}
+        >
+          {score === total ? "Perfect score!" : score >= total / 2 ? "Good work." : "Keep studying."}
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="border-border/50">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <Badge variant="secondary">
-            {current + 1} / {payload.data.length}
-          </Badge>
-          <Badge variant="outline" className="text-xs">MCQ</Badge>
+    <div
+      className="rounded-sm overflow-hidden"
+      style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+    >
+      {/* Progress bar */}
+      <div className="h-px" style={{ background: "var(--surface-3)" }}>
+        <motion.div
+          className="h-full"
+          style={{ background: "var(--amber)" }}
+          animate={{ width: `${((current) / total) * 100}%` }}
+          transition={{ duration: 0.4 }}
+        />
+      </div>
+
+      <div className="p-5">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xs font-mono tracking-widest uppercase" style={{ color: "var(--parchment-3)" }}>
+            {current + 1} / {total}
+          </span>
+          <span className="text-xs font-mono" style={{ color: "var(--amber)" }}>
+            +{score * 10} pts
+          </span>
         </div>
-        <CardTitle className="text-sm font-medium mt-2 leading-relaxed">
+
+        {/* Question */}
+        <p className="font-mono text-sm leading-relaxed mb-5" style={{ color: "var(--parchment)" }}>
           {q.question}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        {q.options.map((opt, idx) => {
-          const isSelected = selected === idx;
-          const isCorrect = idx === q.correct;
-          const showResult = selected !== null;
+        </p>
 
-          let variant: "default" | "outline" | "destructive" = "outline";
-          if (showResult && isCorrect) variant = "default";
-          else if (showResult && isSelected && !isCorrect) variant = "destructive";
+        {/* Options */}
+        <div className="space-y-2">
+          {q.options.map((opt, idx) => {
+            const isSelected = selected === idx;
+            const isCorrect = idx === q.correct;
+            const showResult = selected !== null;
 
-          return (
-            <motion.div key={idx} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant={variant}
-                className="w-full justify-start text-left h-auto py-2 px-3"
+            let bg = "transparent";
+            let borderColor = "var(--border)";
+            let textColor = "var(--parchment-2)";
+
+            if (showResult && isCorrect) {
+              bg = "rgba(39,174,96,0.1)";
+              borderColor = "var(--emerald)";
+              textColor = "var(--emerald)";
+            } else if (showResult && isSelected && !isCorrect) {
+              bg = "rgba(192,57,43,0.1)";
+              borderColor = "var(--crimson)";
+              textColor = "var(--crimson)";
+            } else if (!showResult) {
+              bg = "transparent";
+            }
+
+            return (
+              <motion.button
+                key={idx}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => choose(idx)}
+                disabled={selected !== null}
+                className="w-full text-left px-4 py-2.5 rounded-sm text-xs font-mono transition-all duration-200"
+                style={{
+                  background: bg,
+                  border: `1px solid ${borderColor}`,
+                  color: textColor,
+                  cursor: selected !== null ? "default" : "pointer",
+                }}
+                onMouseEnter={e => {
+                  if (selected === null) (e.currentTarget as HTMLElement).style.background = "var(--amber-dim)";
+                }}
+                onMouseLeave={e => {
+                  if (selected === null) (e.currentTarget as HTMLElement).style.background = "transparent";
+                }}
               >
-                <span className="mr-2 font-mono text-xs opacity-60">
-                  {String.fromCharCode(65 + idx)}.
-                </span>
+                <span className="mr-2 opacity-50">{String.fromCharCode(65 + idx)}.</span>
                 {opt}
-              </Button>
-            </motion.div>
-          );
-        })}
+              </motion.button>
+            );
+          })}
+        </div>
 
+        {/* Explanation */}
         <AnimatePresence>
           {selected !== null && (
             <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-3 rounded-md bg-muted/50 p-3 text-xs text-muted-foreground"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="mt-4 overflow-hidden"
             >
-              {q.explanation}
+              <div
+                className="px-4 py-3 rounded-sm text-xs font-mono leading-relaxed"
+                style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--parchment-2)" }}
+              >
+                <span className="mr-1" style={{ color: "var(--amber)" }}>※</span>
+                {q.explanation}
+              </div>
+              <button
+                onClick={next}
+                className="mt-3 w-full py-2 text-xs font-mono tracking-wider uppercase rounded-sm transition-all duration-200"
+                style={{
+                  background: "var(--amber)",
+                  color: "var(--void)",
+                  border: "none",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+              >
+                {current + 1 >= total ? "Finish" : "Next →"}
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {selected !== null && (
-          <Button className="w-full mt-2" size="sm" onClick={next}>
-            {current + 1 >= payload.data.length ? "Finish" : "Next →"}
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

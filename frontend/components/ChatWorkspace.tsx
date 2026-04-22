@@ -1,22 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useStore, type Message } from "@/lib/store";
+import { AnimatePresence, motion } from "framer-motion";
+import { useStore } from "@/lib/store";
 import { streamChat, generateMCQ, generateFlashcards } from "@/lib/api";
 import { MessageRenderer } from "./MessageRenderer";
 
-const COMMANDS = {
-  "/mcq": { label: "Generate MCQ quiz", hint: "/mcq <topic>" },
-  "/flash": { label: "Generate flashcards", hint: "/flash <topic>" },
-};
+const HINTS = [
+  "Ask anything from your uploaded documents…",
+  "Try /mcq Neural Networks to generate a quiz",
+  "Try /flash Photosynthesis to create flashcards",
+  "Upload a PDF and ask questions about it",
+];
 
 export function ChatWorkspace() {
   const { messages, mode, addMessage, isStreaming, setStreaming } = useStore();
   const [input, setInput] = useState("");
+  const [hint] = useState(() => HINTS[Math.floor(Math.random() * HINTS.length)]);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,13 +31,14 @@ export function ChatWorkspace() {
 
     addMessage({ role: "user", content: text });
 
-    // Handle slash commands
     if (text.startsWith("/mcq ")) {
       const topic = text.slice(5).trim();
       setStreaming(true);
       try {
         const payload = await generateMCQ(topic, 5, mode);
         addMessage({ role: "assistant", content: "", component: payload });
+      } catch {
+        addMessage({ role: "assistant", content: "Failed to generate quiz." });
       } finally {
         setStreaming(false);
       }
@@ -48,40 +51,31 @@ export function ChatWorkspace() {
       try {
         const payload = await generateFlashcards(topic, 8, mode);
         addMessage({ role: "assistant", content: "", component: payload });
+      } catch {
+        addMessage({ role: "assistant", content: "Failed to generate flashcards." });
       } finally {
         setStreaming(false);
       }
       return;
     }
 
-    // Regular chat with streaming
     setStreaming(true);
-    const history = messages.slice(-10).map((m) => ({
-      role: m.role,
-      content: m.content,
-    }));
+    const history = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
 
-    let accumulated = "";
-    const tempId = crypto.randomUUID();
     addMessage({ role: "assistant", content: "" });
 
     try {
       for await (const token of streamChat(text, history, mode)) {
-        accumulated += token;
-        useStore.setState((s) => ({
-          messages: s.messages.map((m) =>
-            m.id === s.messages[s.messages.length - 1].id
-              ? { ...m, content: accumulated }
-              : m
+        useStore.setState(s => ({
+          messages: s.messages.map((m, i) =>
+            i === s.messages.length - 1 ? { ...m, content: m.content + token } : m
           ),
         }));
       }
     } catch {
-      useStore.setState((s) => ({
+      useStore.setState(s => ({
         messages: s.messages.map((m, i) =>
-          i === s.messages.length - 1
-            ? { ...m, content: "Error: could not connect to backend." }
-            : m
+          i === s.messages.length - 1 ? { ...m, content: "⚠ Connection error." } : m
         ),
       }));
     } finally {
@@ -92,59 +86,114 @@ export function ChatWorkspace() {
   return (
     <div className="flex flex-col flex-1 h-screen overflow-hidden">
       {/* Header */}
-      <div className="border-b border-border/50 px-6 py-3 flex items-center gap-3">
+      <div
+        className="px-8 py-4 flex items-center gap-6 shrink-0"
+        style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}
+      >
         <div className="flex-1">
-          <p className="text-sm font-medium">Chat</p>
-          <p className="text-xs text-muted-foreground">
-            {mode === "local" ? "🔒 Privacy Mode — Local AI" : "⚡ Power Mode — Cloud AI"}
+          <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "var(--parchment-3)" }}>
+            Session
+          </p>
+          <p className="font-mono text-sm" style={{ color: "var(--parchment)" }}>
+            {mode === "local" ? "🔒 Privacy Mode" : "⚡ Power Mode"}
+            <span className="ml-2 text-xs" style={{ color: "var(--parchment-3)" }}>
+              {mode === "local" ? "— Ollama / LM Studio" : "— Gemini 2.0 Flash"}
+            </span>
           </p>
         </div>
-        <div className="text-xs text-muted-foreground space-x-2">
-          <span className="opacity-50">/mcq</span>
-          <span className="opacity-50">/flash</span>
+        <div className="flex gap-4">
+          {["/mcq <topic>", "/flash <topic>"].map(cmd => (
+            <span
+              key={cmd}
+              className="text-xs px-2 py-1 rounded-sm font-mono cursor-pointer"
+              style={{
+                border: "1px solid var(--border)",
+                color: "var(--parchment-3)",
+                background: "var(--surface-2)",
+              }}
+              onClick={() => { setInput(cmd.split(" ")[0] + " "); inputRef.current?.focus(); }}
+            >
+              {cmd}
+            </span>
+          ))}
         </div>
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 px-6 py-4">
-        <div className="space-y-4 max-w-3xl mx-auto">
+      <div className="flex-1 overflow-y-auto px-8 py-6" style={{ background: "var(--void)" }}>
+        <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 && (
-            <div className="text-center text-muted-foreground text-sm pt-16 space-y-2">
-              <p className="text-2xl">📚</p>
-              <p>Upload a document or paste a URL to start learning.</p>
-              <p className="text-xs opacity-60">
-                Use <code>/mcq topic</code> or <code>/flash topic</code> for interactive study tools.
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-center pt-24 space-y-6"
+            >
+              <div
+                className="inline-block px-4 py-1 text-xs font-mono tracking-widest uppercase rounded-sm"
+                style={{ border: "1px solid var(--border)", color: "var(--amber)", background: "var(--amber-glow)" }}
+              >
+                Ready
+              </div>
+              <p className="font-display text-2xl" style={{ color: "var(--parchment-2)" }}>
+                What would you like to learn today?
               </p>
-            </div>
+              <p className="text-sm font-mono" style={{ color: "var(--parchment-3)" }}>{hint}</p>
+            </motion.div>
           )}
-          <AnimatePresence>
-            {messages.map((msg) => (
-              <MessageRenderer key={msg.id} msg={msg} />
+
+          <AnimatePresence initial={false}>
+            {messages.map((msg, i) => (
+              <MessageRenderer key={msg.id} msg={msg} isLast={i === messages.length - 1} streaming={isStreaming} />
             ))}
           </AnimatePresence>
+
+          {isStreaming && messages[messages.length - 1]?.role !== "assistant" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
+              <span className="text-xs font-mono" style={{ color: "var(--parchment-3)" }}>Thinking</span>
+              <span className="font-mono" style={{ color: "var(--amber)" }}>…</span>
+            </motion.div>
+          )}
+
           <div ref={bottomRef} />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input */}
-      <div className="border-t border-border/50 px-6 py-4">
-        <div className="max-w-3xl mx-auto flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-            placeholder="Ask anything… or try /mcq Neural Networks"
-            disabled={isStreaming}
-            className="flex-1 rounded-xl border border-input bg-muted/30 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
-          />
-          <Button
+      <div
+        className="px-8 py-5 shrink-0"
+        style={{ borderTop: "1px solid var(--border)", background: "var(--surface)" }}
+      >
+        <div className="max-w-3xl mx-auto flex gap-3">
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
+              placeholder={hint}
+              disabled={isStreaming}
+              className="w-full px-4 py-3 text-sm font-mono rounded-sm glow-focus disabled:opacity-40 transition-all"
+              style={{
+                background: "var(--surface-2)",
+                border: "1px solid var(--border-2)",
+                color: "var(--parchment)",
+              }}
+            />
+          </div>
+          <button
             onClick={send}
             disabled={isStreaming || !input.trim()}
-            className="rounded-xl px-5"
+            className="px-6 py-3 text-xs font-mono tracking-widest uppercase rounded-sm transition-all duration-200 disabled:opacity-30"
+            style={{
+              background: isStreaming || !input.trim() ? "var(--surface-3)" : "var(--amber)",
+              color: isStreaming || !input.trim() ? "var(--parchment-3)" : "var(--void)",
+              border: "1px solid var(--border-2)",
+            }}
           >
-            {isStreaming ? "…" : "Send"}
-          </Button>
+            {isStreaming ? "…" : "Send →"}
+          </button>
         </div>
       </div>
     </div>
