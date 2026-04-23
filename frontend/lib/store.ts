@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type ProviderMode = "local" | "cloud";
+export type Theme = "light" | "dark";
 
 export interface Message {
   id: string;
@@ -38,21 +39,32 @@ interface AppState {
   mode: ProviderMode;
   knowledgeScore: number;
   isStreaming: boolean;
+  theme: Theme;
 
   addMessage: (msg: Omit<Message, "id" | "timestamp">) => void;
   setMode: (mode: ProviderMode) => void;
   incrementScore: (by?: number) => void;
   setStreaming: (v: boolean) => void;
   clearChat: () => void;
+  setTheme: (t: Theme) => void;
+  toggleTheme: () => void;
 }
+
+const applyTheme = (t: Theme) => {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  if (t === "dark") root.classList.add("dark");
+  else root.classList.remove("dark");
+};
 
 export const useStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       messages: [],
       mode: "cloud",
       knowledgeScore: 0,
       isStreaming: false,
+      theme: "light",
 
       addMessage: (msg) =>
         set((s) => ({
@@ -67,7 +79,23 @@ export const useStore = create<AppState>()(
         set((s) => ({ knowledgeScore: s.knowledgeScore + by })),
       setStreaming: (v) => set({ isStreaming: v }),
       clearChat: () => set({ messages: [] }),
+
+      setTheme: (t) => {
+        applyTheme(t);
+        set({ theme: t });
+      },
+      toggleTheme: () => {
+        const next: Theme = get().theme === "dark" ? "light" : "dark";
+        applyTheme(next);
+        set({ theme: next });
+      },
     }),
-    { name: "omni-rag-store", partialize: (s) => ({ knowledgeScore: s.knowledgeScore }) }
+    {
+      name: "omni-rag-store",
+      partialize: (s) => ({ knowledgeScore: s.knowledgeScore, theme: s.theme, mode: s.mode }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.theme) applyTheme(state.theme);
+      },
+    }
   )
 );

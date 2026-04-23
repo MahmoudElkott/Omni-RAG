@@ -4,145 +4,423 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ── Design Tokens ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   EDITORIAL SCHOLAR — Claude-style design tokens
+   A warm, literary palette inspired by aged paper & printer's clay.
+   ═══════════════════════════════════════════════════════════════════ */
+
 :root {
-  --void:        #080808;
-  --surface:     #111111;
-  --surface-2:   #181818;
-  --surface-3:   #202020;
-  --border:      rgba(212, 168, 83, 0.15);
-  --border-2:    rgba(212, 168, 83, 0.30);
-  --amber:       #D4A853;
-  --amber-dim:   rgba(212, 168, 83, 0.12);
-  --amber-glow:  rgba(212, 168, 83, 0.06);
-  --parchment:   #E8DCC8;
-  --parchment-2: #A09278;
-  --parchment-3: #5C5042;
-  --crimson:     #C0392B;
-  --emerald:     #27AE60;
-  --radius:      0.25rem;
+  /* ── Paper & ink (light) ──────────────────────────────────────── */
+  --paper:        #FAF8F2;
+  --paper-2:      #F4EFE2;
+  --paper-3:      #EBE4D1;
+  --vellum:       #FFFFFF;
 
-  /* shadcn compat */
-  --background:        var(--void);
-  --foreground:        var(--parchment);
-  --card:              var(--surface);
-  --card-foreground:   var(--parchment);
-  --popover:           var(--surface-2);
-  --popover-foreground:var(--parchment);
-  --primary:           var(--amber);
-  --primary-foreground:var(--void);
-  --secondary:         var(--surface-3);
-  --secondary-foreground: var(--parchment);
-  --muted:             var(--surface-2);
-  --muted-foreground:  var(--parchment-2);
-  --accent:            var(--amber-dim);
-  --accent-foreground: var(--amber);
-  --destructive:       var(--crimson);
-  --input:             var(--surface-3);
-  --ring:              var(--amber);
+  --ink:          #2B2822;
+  --ink-2:        #4A4639;
+  --ink-3:        #7A7361;
+  --ink-4:        #A9A28B;
+
+  --rule:         rgba(58, 48, 30, 0.10);
+  --rule-2:       rgba(58, 48, 30, 0.18);
+
+  /* ── Clay accent (Claude signature) ─────────────────────────────── */
+  --clay:         #C15F3C;
+  --clay-deep:    #A84D2D;
+  --clay-soft:    rgba(193, 95, 60, 0.10);
+  --clay-wash:    rgba(193, 95, 60, 0.05);
+
+  /* ── Semantic ───────────────────────────────────────────────────── */
+  --sage:         #6B8E5A;
+  --sage-soft:    rgba(107, 142, 90, 0.12);
+  --rust:         #A65F4B;
+  --rust-soft:    rgba(166, 95, 75, 0.12);
+
+  /* ── Geometry ───────────────────────────────────────────────────── */
+  --radius:       0.875rem;
+  --radius-sm:    0.5rem;
+  --radius-lg:    1.25rem;
+  --radius-xl:    1.75rem;
+
+  /* ── Shadows (warm, soft) ───────────────────────────────────────── */
+  --shadow-s:     0 1px 2px rgba(60, 40, 20, 0.04), 0 1px 1px rgba(60, 40, 20, 0.03);
+  --shadow-m:     0 2px 4px rgba(60, 40, 20, 0.04), 0 8px 20px rgba(60, 40, 20, 0.06);
+  --shadow-l:     0 4px 12px rgba(60, 40, 20, 0.05), 0 24px 48px rgba(60, 40, 20, 0.10);
+  --shadow-clay:  0 2px 4px rgba(193, 95, 60, 0.15), 0 12px 28px rgba(193, 95, 60, 0.18);
+
+  /* ── Shadcn compat ──────────────────────────────────────────────── */
+  --background:           var(--paper);
+  --foreground:           var(--ink);
+  --card:                 var(--vellum);
+  --card-foreground:      var(--ink);
+  --popover:              var(--vellum);
+  --popover-foreground:   var(--ink);
+  --primary:              var(--clay);
+  --primary-foreground:   var(--vellum);
+  --secondary:            var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted:                var(--paper-2);
+  --muted-foreground:     var(--ink-3);
+  --accent:               var(--clay-soft);
+  --accent-foreground:    var(--clay-deep);
+  --destructive:          var(--rust);
+  --input:                var(--paper-2);
+  --border:               var(--rule);
+  --ring:                 var(--clay);
 }
 
+/* ── Dark Scholar (warm night ink) ──────────────────────────────── */
+.dark {
+  --paper:        #1C1B17;
+  --paper-2:      #23221D;
+  --paper-3:      #2B2A23;
+  --vellum:       #1F1E19;
+
+  --ink:          #EDE7D3;
+  --ink-2:        #CEC7B1;
+  --ink-3:        #8F8771;
+  --ink-4:        #615C4A;
+
+  --rule:         rgba(237, 231, 211, 0.08);
+  --rule-2:       rgba(237, 231, 211, 0.16);
+
+  --clay:         #DD7B57;
+  --clay-deep:    #C96442;
+  --clay-soft:    rgba(221, 123, 87, 0.12);
+  --clay-wash:    rgba(221, 123, 87, 0.06);
+
+  --sage:         #8FAE7E;
+  --sage-soft:    rgba(143, 174, 126, 0.14);
+  --rust:         #D48A73;
+  --rust-soft:    rgba(212, 138, 115, 0.14);
+
+  --shadow-s:     0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.18);
+  --shadow-m:     0 2px 4px rgba(0, 0, 0, 0.25), 0 12px 24px rgba(0, 0, 0, 0.35);
+  --shadow-l:     0 8px 24px rgba(0, 0, 0, 0.35), 0 32px 64px rgba(0, 0, 0, 0.45);
+  --shadow-clay:  0 2px 6px rgba(221, 123, 87, 0.20), 0 14px 32px rgba(221, 123, 87, 0.22);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--vellum);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-2);
+  --popover-foreground: var(--ink);
+  --primary: var(--clay);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--clay-soft);
+  --accent-foreground: var(--clay);
+  --destructive: var(--rust);
+  --input: var(--paper-2);
+  --border: var(--rule);
+  --ring: var(--clay);
+}
+
+/* ── Theme tokens for Tailwind v4 ───────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-void: var(--void);
-  --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --color-amber: var(--amber);
-  --color-amber-dim: var(--amber-dim);
-  --color-parchment: var(--parchment);
-  --color-parchment-2: var(--parchment-2);
-  --color-parchment-3: var(--parchment-3);
-  --color-crimson: var(--crimson);
-  --color-emerald: var(--emerald);
+  --color-background:          var(--background);
+  --color-foreground:          var(--foreground);
+  --color-card:                var(--card);
+  --color-card-foreground:     var(--card-foreground);
+  --color-popover:             var(--popover);
+  --color-popover-foreground:  var(--popover-foreground);
+  --color-primary:             var(--primary);
+  --color-primary-foreground:  var(--primary-foreground);
+  --color-secondary:           var(--secondary);
+  --color-secondary-foreground:var(--secondary-foreground);
+  --color-muted:               var(--muted);
+  --color-muted-foreground:    var(--muted-foreground);
+  --color-accent:              var(--accent);
+  --color-accent-foreground:   var(--accent-foreground);
+  --color-destructive:         var(--destructive);
+  --color-border:              var(--border);
+  --color-input:               var(--input);
+  --color-ring:                var(--ring);
+
+  --color-paper:      var(--paper);
+  --color-paper-2:    var(--paper-2);
+  --color-paper-3:    var(--paper-3);
+  --color-vellum:     var(--vellum);
+  --color-ink:        var(--ink);
+  --color-ink-2:      var(--ink-2);
+  --color-ink-3:      var(--ink-3);
+  --color-ink-4:      var(--ink-4);
+  --color-rule:       var(--rule);
+  --color-rule-2:     var(--rule-2);
+  --color-clay:       var(--clay);
+  --color-clay-deep:  var(--clay-deep);
+  --color-clay-soft:  var(--clay-soft);
+  --color-clay-wash:  var(--clay-wash);
+  --color-sage:       var(--sage);
+  --color-rust:       var(--rust);
+
   --font-display: var(--font-display);
-  --font-mono: var(--font-mono);
-  --radius-sm: calc(var(--radius) * 0.5);
+  --font-sans:    var(--font-sans);
+  --font-mono:    var(--font-mono);
+
+  --radius-sm: var(--radius-sm);
   --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) * 1.5);
-  --radius-xl: calc(var(--radius) * 2);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 }
 
-/* ── Base ───────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════════ */
 @layer base {
-  * { @apply border-border outline-ring/50; }
+  * { border-color: var(--border); outline-color: color-mix(in srgb, var(--ring) 50%, transparent); }
+
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
 
   body {
-    background-color: var(--void);
-    color: var(--parchment);
-    font-family: var(--font-mono), "Courier New", monospace;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv02", "cv11";
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.3s ease;
   }
 
-  /* Grain overlay */
+  /* Paper grain — very subtle, warm */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.35;
+    opacity: 0.40;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .dark body::before {
+    opacity: 0.55;
+    mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.92 0 0 0 0 0.78 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--void); }
-  ::-webkit-scrollbar-thumb { background: var(--parchment-3); border-radius: 2px; }
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
+    background-clip: padding-box;
+  }
+
+  /* Selection */
+  ::selection { background: var(--clay-soft); color: var(--clay-deep); }
+  .dark ::selection { background: var(--clay-soft); color: var(--ink); }
 }
 
-/* ── Utilities ──────────────────────────────────────────────────── */
-.font-display { font-family: var(--font-display), Georgia, serif; }
-.font-mono    { font-family: var(--font-mono), monospace; }
+/* ═══════════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+.font-display {
+  font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
+  font-feature-settings: "liga", "dlig", "ss01";
+  letter-spacing: -0.01em;
+}
+.font-sans {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
 
-/* Amber glow on focus */
-.glow-focus:focus {
+/* Small-caps editorial label */
+.eyebrow {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Drop-cap-style numeral */
+.display-numeral {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  font-feature-settings: "lnum", "ss01";
+}
+
+/* Italic flourish */
+.flourish {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ORNAMENTS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Typographic hairline */
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rule-2) 25%, var(--rule-2) 75%, transparent);
+}
+
+/* Clay underline */
+.clay-rule {
+  height: 2px;
+  width: 1.75rem;
+  background: var(--clay);
+  border-radius: 1px;
+}
+
+/* Soft card surface */
+.surface-card {
+  background: var(--vellum);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-s);
+  border-radius: var(--radius);
+}
+
+/* Inset panel */
+.surface-panel {
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INTERACTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Clay focus ring */
+.clay-focus:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 1px var(--amber), 0 0 12px rgba(212,168,83,0.15);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--clay) 18%, transparent),
+    0 0 0 1px var(--clay);
 }
 
-/* Amber underline decoration */
-.amber-rule {
-  border-bottom: 1px solid rgba(212,168,83,0.3);
-}
+/* Hover lift */
+.lift { transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.25s ease; }
+.lift:hover { transform: translateY(-1px); box-shadow: var(--shadow-m); }
 
-/* Score pulse animation */
-@keyframes score-pulse {
-  0%   { text-shadow: 0 0 0 rgba(212,168,83,0); }
-  50%  { text-shadow: 0 0 20px rgba(212,168,83,0.6); }
-  100% { text-shadow: 0 0 0 rgba(212,168,83,0); }
-}
-.score-pulse { animation: score-pulse 0.6s ease-out; }
-
-/* Streaming cursor */
-@keyframes blink {
+/* Streaming cursor — serif pilcrow */
+@keyframes cursor-pulse {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+  50%      { opacity: 0.25; }
 }
 .streaming-cursor::after {
-  content: "▍";
-  color: var(--amber);
-  animation: blink 1s step-end infinite;
+  content: "▊";
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--clay);
+  animation: cursor-pulse 1s ease-in-out infinite;
+  transform: translateY(-1px);
 }
 
-/* Card hover lift */
-.lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Score reveal */
+@keyframes score-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
-.lift:hover {
+.score-pop { animation: score-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Shimmer */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--paper-2) 0%, var(--paper-3) 50%, var(--paper-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+/* Ink-drawing underline */
+@keyframes draw-underline {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.draw-under {
+  position: relative;
+}
+.draw-under::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: var(--clay);
+  transform-origin: left;
+  animation: draw-underline 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Fade-in utility */
+@keyframes soft-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.soft-in { animation: soft-in 0.5s cubic-bezier(0.2, 0, 0, 1) forwards; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PROSE (chat message body)
+   ═══════════════════════════════════════════════════════════════════ */
+.prose-editorial {
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.72;
+  letter-spacing: -0.003em;
+}
+.prose-editorial p + p { margin-top: 0.85em; }
+.prose-editorial code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.12em 0.38em;
+  background: var(--paper-2);
+  color: var(--clay-deep);
+  border: 1px solid var(--rule);
+  border-radius: 0.3rem;
+}
+.dark .prose-editorial code {
+  color: var(--clay);
+  background: var(--paper-3);
+}
+.prose-editorial strong { color: var(--ink); font-weight: 600; }
+.prose-editorial em { font-family: var(--font-display); font-style: italic; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   BUTTON BASE (for re-used primary action)
+   ═══════════════════════════════════════════════════════════════════ */
+.btn-clay {
+  background: var(--clay);
+  color: var(--vellum);
+  border: 1px solid color-mix(in srgb, var(--clay-deep) 80%, transparent);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: var(--shadow-s);
+}
+.btn-clay:hover:not(:disabled) {
+  background: var(--clay-deep);
+  box-shadow: var(--shadow-clay);
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.btn-clay:active:not(:disabled) { transform: translateY(0); }
+.btn-clay:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border: 1px solid var(--rule-2);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--paper-2);
+  color: var(--ink);
+  border-color: var(--rule-2);
 }

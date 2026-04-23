@@ -25,3 +25,9 @@ chroma_db/
 *.log
 .DS_Store
 Thumbs.db
+
+# Playwright & local screenshots
+.playwright-mcp/
+*.png
+*.jpeg
+*.jpg
