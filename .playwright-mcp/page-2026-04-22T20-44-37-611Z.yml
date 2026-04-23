@@ -1,0 +1,42 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Omni-RAG" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Learning Hub
+    - separator [ref=e7]
+    - generic [ref=e8]:
+      - paragraph [ref=e9]: Knowledge Score
+      - paragraph [ref=e10]: "0"
+    - generic [ref=e11]:
+      - paragraph [ref=e12]: Provider
+      - generic [ref=e13]:
+        - button "🔒 Privacy" [ref=e14]
+        - button "⚡ Power" [ref=e15]
+      - paragraph [ref=e16]: Gemini / OpenAI
+    - separator [ref=e17]
+    - generic [ref=e18]:
+      - paragraph [ref=e19]: Documents
+      - button "Upload File" [ref=e20]
+      - generic [ref=e21]:
+        - textbox "https://..." [ref=e22]
+        - button "+" [ref=e23]
+    - separator [ref=e24]
+    - button "Clear Chat" [ref=e25]
+  - generic [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - paragraph [ref=e29]: Chat
+        - paragraph [ref=e30]: ⚡ Power Mode — Cloud AI
+      - generic [ref=e31]: /mcq/flash
+    - generic [ref=e34]:
+      - paragraph [ref=e35]: 📚
+      - paragraph [ref=e36]: Upload a document or paste a URL to start learning.
+      - paragraph [ref=e37]:
+        - text: Use
+        - code [ref=e38]: /mcq topic
+        - text: or
+        - code [ref=e39]: /flash topic
+        - text: for interactive study tools.
+    - generic [ref=e41]:
+      - textbox "Ask anything… or try /mcq Neural Networks" [ref=e42]
+      - button "Send" [disabled]
