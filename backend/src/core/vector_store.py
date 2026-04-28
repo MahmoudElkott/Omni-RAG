@@ -35,5 +35,27 @@ class VectorStore:
         metas = results.get("metadatas", [[]])[0]
         return [{"content": d, "metadata": m} for d, m in zip(docs, metas)]
 
+    def all_chunks(self) -> list[dict[str, Any]]:
+        results = self._collection.get(include=["documents", "metadatas"])
+        ids = results.get("ids", [])
+        docs = results.get("documents", [])
+        metas = results.get("metadatas", [])
+
+        chunks = []
+        for chunk_id, content, metadata in zip(ids, docs, metas):
+            source = metadata.get("source", "") if metadata else ""
+            chunk_index = metadata.get("chunk", 0) if metadata else 0
+            chunks.append(
+                {
+                    "id": chunk_id,
+                    "source": source,
+                    "chunk": chunk_index,
+                    "content": content,
+                }
+            )
+
+        chunks.sort(key=lambda item: (item["source"], item["chunk"]))
+        return chunks
+
     def reset(self) -> None:
         _CLIENT.reset()

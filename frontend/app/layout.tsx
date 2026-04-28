@@ -39,8 +39,10 @@ const themeInit = `
     if (raw) {
       try { t = (JSON.parse(raw).state || {}).theme || null; } catch(e) {}
     }
-    if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    if (t === 'dark') document.documentElement.classList.add('dark');
+    if (!t) t = 'emerald';
+    var root = document.documentElement;
+    root.dataset.theme = t;
+    root.classList.toggle('dark', t !== 'emerald');
   } catch(e) {}
 })();
 `;
@@ -52,12 +54,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-theme="emerald"
       className={`${fraunces.variable} ${instrumentSans.variable} ${jetbrainsMono.variable} h-full`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="h-full antialiased font-sans">{children}</body>
+      <body className="h-full antialiased font-sans" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

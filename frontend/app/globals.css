@@ -5,36 +5,36 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
-   EDITORIAL SCHOLAR — Claude-style design tokens
-   A warm, literary palette inspired by aged paper & printer's clay.
-   ═══════════════════════════════════════════════════════════════════ */
+  THEME TOKENS
+  Emerald/Snow is the default; Cyber, Terminal, and OLED override it.
+  ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Paper & ink (light) ──────────────────────────────────────── */
-  --paper:        #FAF8F2;
-  --paper-2:      #F4EFE2;
-  --paper-3:      #EBE4D1;
+  /* ── Emerald/Snow (default) ─────────────────────────────────── */
+  --paper:        #F7FAF6;
+  --paper-2:      #EEF4EF;
+  --paper-3:      #E1ECE4;
   --vellum:       #FFFFFF;
 
-  --ink:          #2B2822;
-  --ink-2:        #4A4639;
-  --ink-3:        #7A7361;
-  --ink-4:        #A9A28B;
+  --ink:          #18231D;
+  --ink-2:        #31433A;
+  --ink-3:        #5E7167;
+  --ink-4:        #8EA296;
 
-  --rule:         rgba(58, 48, 30, 0.10);
-  --rule-2:       rgba(58, 48, 30, 0.18);
+  --rule:         rgba(28, 65, 43, 0.10);
+  --rule-2:       rgba(28, 65, 43, 0.18);
 
-  /* ── Clay accent (Claude signature) ─────────────────────────────── */
-  --clay:         #C15F3C;
-  --clay-deep:    #A84D2D;
-  --clay-soft:    rgba(193, 95, 60, 0.10);
-  --clay-wash:    rgba(193, 95, 60, 0.05);
+  /* ── Emerald accent ───────────────────────────────────────────── */
+  --clay:         #2B8C67;
+  --clay-deep:    #1F6F52;
+  --clay-soft:    rgba(43, 140, 103, 0.10);
+  --clay-wash:    rgba(43, 140, 103, 0.06);
 
   /* ── Semantic ───────────────────────────────────────────────────── */
-  --sage:         #6B8E5A;
-  --sage-soft:    rgba(107, 142, 90, 0.12);
-  --rust:         #A65F4B;
-  --rust-soft:    rgba(166, 95, 75, 0.12);
+  --sage:         #4D8C63;
+  --sage-soft:    rgba(77, 140, 99, 0.12);
+  --rust:         #AE634F;
+  --rust-soft:    rgba(174, 99, 79, 0.12);
 
   /* ── Geometry ───────────────────────────────────────────────────── */
   --radius:       0.875rem;
@@ -43,10 +43,10 @@
   --radius-xl:    1.75rem;
 
   /* ── Shadows (warm, soft) ───────────────────────────────────────── */
-  --shadow-s:     0 1px 2px rgba(60, 40, 20, 0.04), 0 1px 1px rgba(60, 40, 20, 0.03);
-  --shadow-m:     0 2px 4px rgba(60, 40, 20, 0.04), 0 8px 20px rgba(60, 40, 20, 0.06);
-  --shadow-l:     0 4px 12px rgba(60, 40, 20, 0.05), 0 24px 48px rgba(60, 40, 20, 0.10);
-  --shadow-clay:  0 2px 4px rgba(193, 95, 60, 0.15), 0 12px 28px rgba(193, 95, 60, 0.18);
+  --shadow-s:     0 1px 2px rgba(25, 48, 34, 0.04), 0 1px 1px rgba(25, 48, 34, 0.03);
+  --shadow-m:     0 2px 4px rgba(25, 48, 34, 0.05), 0 8px 20px rgba(25, 48, 34, 0.07);
+  --shadow-l:     0 4px 12px rgba(25, 48, 34, 0.06), 0 24px 48px rgba(25, 48, 34, 0.11);
+  --shadow-clay:  0 2px 4px rgba(43, 140, 103, 0.14), 0 12px 28px rgba(43, 140, 103, 0.16);
 
   /* ── Shadcn compat ──────────────────────────────────────────────── */
   --background:           var(--paper);
@@ -69,35 +69,141 @@
   --ring:                 var(--clay);
 }
 
-/* ── Dark Scholar (warm night ink) ──────────────────────────────── */
-.dark {
-  --paper:        #1C1B17;
-  --paper-2:      #23221D;
-  --paper-3:      #2B2A23;
-  --vellum:       #1F1E19;
 
-  --ink:          #EDE7D3;
-  --ink-2:        #CEC7B1;
-  --ink-3:        #8F8771;
-  --ink-4:        #615C4A;
+html[data-theme="emerald"] {
+  color-scheme: light;
+}
 
-  --rule:         rgba(237, 231, 211, 0.08);
-  --rule-2:       rgba(237, 231, 211, 0.16);
+html.dark,
+html[data-theme="terminal"] {
+  color-scheme: dark;
+  --paper:        #15100B;
+  --paper-2:      #1D160F;
+  --paper-3:      #271D14;
+  --vellum:       #18120C;
 
-  --clay:         #DD7B57;
-  --clay-deep:    #C96442;
-  --clay-soft:    rgba(221, 123, 87, 0.12);
-  --clay-wash:    rgba(221, 123, 87, 0.06);
+  --ink:          #F3DEB4;
+  --ink-2:        #D7B877;
+  --ink-3:        #AC8550;
+  --ink-4:        #6F5831;
 
-  --sage:         #8FAE7E;
-  --sage-soft:    rgba(143, 174, 126, 0.14);
-  --rust:         #D48A73;
-  --rust-soft:    rgba(212, 138, 115, 0.14);
+  --rule:         rgba(255, 192, 92, 0.10);
+  --rule-2:       rgba(255, 192, 92, 0.18);
 
-  --shadow-s:     0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.18);
-  --shadow-m:     0 2px 4px rgba(0, 0, 0, 0.25), 0 12px 24px rgba(0, 0, 0, 0.35);
-  --shadow-l:     0 8px 24px rgba(0, 0, 0, 0.35), 0 32px 64px rgba(0, 0, 0, 0.45);
-  --shadow-clay:  0 2px 6px rgba(221, 123, 87, 0.20), 0 14px 32px rgba(221, 123, 87, 0.22);
+  --clay:         #FFB34D;
+  --clay-deep:    #D98B2F;
+  --clay-soft:    rgba(255, 179, 77, 0.13);
+  --clay-wash:    rgba(255, 179, 77, 0.06);
+
+  --sage:         #D6A85F;
+  --sage-soft:    rgba(214, 168, 95, 0.14);
+  --rust:         #F08E6E;
+  --rust-soft:    rgba(240, 142, 110, 0.14);
+
+  --shadow-s:     0 1px 2px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(255, 185, 92, 0.05);
+  --shadow-m:     0 2px 6px rgba(0, 0, 0, 0.40), 0 0 18px rgba(255, 185, 92, 0.12);
+  --shadow-l:     0 8px 24px rgba(0, 0, 0, 0.52), 0 0 28px rgba(255, 185, 92, 0.14);
+  --shadow-clay:  0 0 0 1px rgba(255, 185, 92, 0.22), 0 0 28px rgba(255, 185, 92, 0.24);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--vellum);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-2);
+  --popover-foreground: var(--ink);
+  --primary: var(--clay);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--clay-soft);
+  --accent-foreground: var(--clay);
+  --destructive: var(--rust);
+  --input: var(--paper-2);
+  --border: var(--rule);
+  --ring: var(--clay);
+}
+
+html[data-theme="cyber"] {
+  color-scheme: dark;
+  --paper:        #081019;
+  --paper-2:      #0D1824;
+  --paper-3:      #112334;
+  --vellum:       #0B111A;
+
+  --ink:          #E6FBFF;
+  --ink-2:        #B9D8E2;
+  --ink-3:        #87A8B4;
+  --ink-4:        #56707B;
+
+  --rule:         rgba(79, 233, 255, 0.14);
+  --rule-2:       rgba(79, 233, 255, 0.24);
+
+  --clay:         #4EF2D4;
+  --clay-deep:    #1DBFA7;
+  --clay-soft:    rgba(78, 242, 212, 0.14);
+  --clay-wash:    rgba(78, 242, 212, 0.06);
+
+  --sage:         #97FF72;
+  --sage-soft:    rgba(151, 255, 114, 0.14);
+  --rust:         #FF7CA6;
+  --rust-soft:    rgba(255, 124, 166, 0.14);
+
+  --shadow-s:     0 1px 2px rgba(0, 0, 0, 0.36), 0 0 12px rgba(78, 242, 212, 0.08);
+  --shadow-m:     0 2px 6px rgba(0, 0, 0, 0.42), 0 0 20px rgba(78, 242, 212, 0.18);
+  --shadow-l:     0 10px 28px rgba(0, 0, 0, 0.56), 0 0 40px rgba(78, 242, 212, 0.20);
+  --shadow-clay:  0 0 0 1px rgba(78, 242, 212, 0.25), 0 0 30px rgba(78, 242, 212, 0.32);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--vellum);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-2);
+  --popover-foreground: var(--ink);
+  --primary: var(--clay);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--clay-soft);
+  --accent-foreground: var(--clay);
+  --destructive: var(--rust);
+  --input: var(--paper-2);
+  --border: var(--rule);
+  --ring: var(--clay);
+}
+
+html[data-theme="oled"] {
+  color-scheme: dark;
+  --paper:        #050505;
+  --paper-2:      #0C0C0C;
+  --paper-3:      #161616;
+  --vellum:       #090909;
+
+  --ink:          #FAFAFA;
+  --ink-2:        #D9D9D9;
+  --ink-3:        #A0A0A0;
+  --ink-4:        #696969;
+
+  --rule:         rgba(255, 255, 255, 0.10);
+  --rule-2:       rgba(255, 255, 255, 0.18);
+
+  --clay:         #4DA3FF;
+  --clay-deep:    #2D7DFF;
+  --clay-soft:    rgba(77, 163, 255, 0.14);
+  --clay-wash:    rgba(77, 163, 255, 0.06);
+
+  --sage:         #00E676;
+  --sage-soft:    rgba(0, 230, 118, 0.14);
+  --rust:         #FF3D71;
+  --rust-soft:    rgba(255, 61, 113, 0.14);
+
+  --shadow-s:     0 1px 2px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(77, 163, 255, 0.05);
+  --shadow-m:     0 2px 6px rgba(0, 0, 0, 0.56), 0 0 20px rgba(77, 163, 255, 0.12);
+  --shadow-l:     0 10px 28px rgba(0, 0, 0, 0.70), 0 0 34px rgba(77, 163, 255, 0.14);
+  --shadow-clay:  0 0 0 1px rgba(77, 163, 255, 0.24), 0 0 30px rgba(77, 163, 255, 0.30);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -196,10 +302,37 @@
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .dark body::before {
+  html.dark body::before {
     opacity: 0.55;
     mix-blend-mode: screen;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.92 0 0 0 0 0.78 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  html[data-theme="cyber"] body::before {
+    opacity: 0.28;
+    mix-blend-mode: screen;
+    background-image:
+      linear-gradient(rgba(78, 242, 212, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(78, 242, 212, 0.05) 1px, transparent 1px),
+      radial-gradient(circle at top center, rgba(78, 242, 212, 0.12), transparent 34%),
+      radial-gradient(circle at bottom right, rgba(255, 124, 166, 0.08), transparent 28%);
+    background-size: 100% 28px, 28px 100%, auto, auto;
+  }
+
+  html[data-theme="terminal"] body::before {
+    opacity: 0.28;
+    mix-blend-mode: screen;
+    background-image:
+      linear-gradient(rgba(255, 179, 77, 0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 179, 77, 0.06) 1px, transparent 1px),
+      linear-gradient(rgba(255, 179, 77, 0.04), rgba(255, 179, 77, 0.01));
+    background-size: 100% 3px, 32px 100%, 100% 100%;
+  }
+
+  html[data-theme="oled"] body::before {
+    opacity: 0.10;
+    mix-blend-mode: screen;
+    background-image: radial-gradient(circle at center, rgba(77, 163, 255, 0.08), transparent 36%);
   }
 
   /* Scrollbar */
@@ -218,7 +351,7 @@
 
   /* Selection */
   ::selection { background: var(--clay-soft); color: var(--clay-deep); }
-  .dark ::selection { background: var(--clay-soft); color: var(--ink); }
+  html.dark ::selection { background: var(--clay-soft); color: var(--ink); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -388,7 +521,7 @@
   border: 1px solid var(--rule);
   border-radius: 0.3rem;
 }
-.dark .prose-editorial code {
+html.dark .prose-editorial code {
   color: var(--clay);
   background: var(--paper-3);
 }

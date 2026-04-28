@@ -71,6 +71,12 @@ async def health() -> dict:
     return {s.provider: {"alive": s.alive, "latency_ms": s.latency_ms} for s in statuses}
 
 
+@router.get("/chunks")
+async def chunks() -> dict:
+    chunk_list = _store.all_chunks()
+    return {"chunks": chunk_list, "total": len(chunk_list)}
+
+
 # ── Ingest ──────────────────────────────────────────────────────────────
 
 @router.post("/ingest/file")

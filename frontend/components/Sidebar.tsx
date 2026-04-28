@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useStore } from "@/lib/store";
+import { Theme, useStore } from "@/lib/store";
 import { ingestFile, ingestUrl } from "@/lib/api";
 import { KeysModal } from "./KeysModal";
+import { ChunksDrawer } from "./ChunksDrawer";
 
 // ── Inline SVG icons (keeps us independent of icon library quirks) ──
 const Icon = {
@@ -52,15 +53,40 @@ const Icon = {
       <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>
     </svg>
   ),
+  Plus: () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 5v14" /><path d="M5 12h14" />
+    </svg>
+  ),
+  Layers: () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3 9 5-9 5-9-5 9-5z" />
+      <path d="m3 13 9 5 9-5" />
+      <path d="m3 18 9 5 9-5" />
+    </svg>
+  ),
 };
 
+const THEMES: Array<{ value: Theme; label: string; note: string; swatch: string }> = [
+  { value: "emerald", label: "Emerald / Snow", note: "Clean, professional solid fills", swatch: "linear-gradient(90deg, #2B8C67, #F7FAF6)" },
+  { value: "cyber", label: "Cyber", note: "Neon glow and electric contrast", swatch: "linear-gradient(90deg, #4EF2D4, #FF7CA6)" },
+  { value: "terminal", label: "Terminal", note: "Amber phosphor and retro glow", swatch: "linear-gradient(90deg, #FFB34D, #1D160F)" },
+  { value: "oled", label: "OLED", note: "High contrast, pure color edges", swatch: "linear-gradient(90deg, #4DA3FF, #050505)" },
+];
+
 export function Sidebar() {
-  const { mode, setMode, knowledgeScore, clearChat, theme, toggleTheme } = useStore();
+  const { mode, setMode, knowledgeScore, sessions, activeSessionId, startNewSession, selectSession, theme, setTheme } = useStore();
   const [urlInput, setUrlInput] = useState("");
   const [ingesting, setIngesting] = useState(false);
   const [toast, setToast] = useState<{ ok: boolean; text: string } | null>(null);
   const [keysOpen, setKeysOpen] = useState(false);
+  const [chunksOpen, setChunksOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const sortedSessions = useMemo(
+    () => [...sessions].sort((a, b) => b.updatedAt - a.updatedAt),
+    [sessions]
+  );
 
   const showToast = (ok: boolean, text: string) => {
     setToast({ ok, text });
@@ -97,7 +123,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="flex flex-col w-72 shrink-0 h-screen relative bg-vellum/60 backdrop-blur-[2px]"
+    <aside className="flex flex-col w-72 shrink-0 h-screen overflow-y-auto relative bg-vellum/60 backdrop-blur-[2px]"
            style={{ borderRight: "1px solid var(--rule)" }}>
       {/* Masthead */}
       <header className="px-7 pt-8 pb-6 relative">
@@ -169,6 +195,84 @@ export function Sidebar() {
 
       <div className="hairline mx-7" />
 
+      {/* History */}
+      <section className="px-7 py-6">
+        <div className="flex items-center justify-between gap-3">
+          <span className="eyebrow">History</span>
+          <button
+            onClick={startNewSession}
+            className="group inline-flex items-center gap-1.5 text-[0.7rem] text-ink-3 hover:text-clay transition-colors"
+          >
+            <Icon.Plus />
+            <span>New session</span>
+          </button>
+        </div>
+
+        <div className="mt-3 space-y-2 max-h-44 overflow-y-auto pr-1">
+          {sortedSessions.map((session) => {
+            const active = session.id === activeSessionId;
+            return (
+              <button
+                key={session.id}
+                onClick={() => selectSession(session.id)}
+                className={`w-full text-left rounded-xl border px-3 py-3 transition-all ${
+                  active
+                    ? "border-[var(--rule-2)] bg-[var(--vellum)] shadow-[var(--shadow-s)]"
+                    : "border-[var(--rule)] bg-paper-2/50 hover:border-[var(--rule-2)] hover:bg-[var(--vellum)]"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-display text-[0.92rem] text-ink truncate">
+                      {session.title}
+                    </p>
+                    <p className="mt-1 text-[0.68rem] text-ink-4">
+                      {session.messages.length} message{session.messages.length === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                  <span className={`font-mono text-[0.62rem] uppercase tracking-[0.18em] ${active ? "text-clay" : "text-ink-4"}`}>
+                    {active ? "Active" : "Saved"}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="hairline mx-7" />
+
+      {/* Theme */}
+      <section className="px-7 py-6">
+        <span className="eyebrow">Theme</span>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {THEMES.map((option) => {
+            const active = theme === option.value;
+            return (
+              <button
+                key={option.value}
+                onClick={() => setTheme(option.value)}
+                className={`text-left rounded-xl border p-3 transition-all ${
+                  active
+                    ? "border-[var(--rule-2)] bg-[var(--vellum)] shadow-[var(--shadow-s)]"
+                    : "border-[var(--rule)] bg-paper-2/50 hover:border-[var(--rule-2)] hover:bg-[var(--vellum)]"
+                }`}
+              >
+                <div className="h-1.5 rounded-full" style={{ background: option.swatch }} />
+                <p className="mt-2 font-display text-[0.86rem] leading-tight text-ink">
+                  {option.label}
+                </p>
+                <p className="mt-1 text-[0.67rem] leading-snug text-ink-3">
+                  {option.note}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="hairline mx-7" />
+
       {/* Documents */}
       <section className="px-7 py-6 flex-1 flex flex-col">
         <span className="eyebrow">Corpus</span>
@@ -214,6 +318,14 @@ export function Sidebar() {
           </button>
         </div>
 
+        <button
+          onClick={() => setChunksOpen(true)}
+          className="mt-3 inline-flex items-center gap-1.5 text-[0.72rem] text-ink-3 hover:text-clay transition-colors"
+        >
+          <Icon.Layers />
+          <span>View chunks</span>
+        </button>
+
         <p className="text-[0.7rem] text-ink-4 mt-2.5 leading-relaxed">
           Accepts <span className="font-mono text-[0.68rem]">pdf · txt · md · docx</span> or any URL.
         </p>
@@ -252,32 +364,17 @@ export function Sidebar() {
           </button>
           <span className="text-ink-4 mx-1.5">·</span>
           <button
-            onClick={clearChat}
+            onClick={startNewSession}
             className="group flex items-center gap-1.5 text-[0.72rem] text-ink-3 hover:text-rust transition-colors"
           >
-            <Icon.Erase />
-            <span>Clear</span>
+            <Icon.Plus />
+            <span>New</span>
           </button>
         </div>
-
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          aria-label="Toggle theme"
-          className="relative w-12 h-6 rounded-full bg-paper-2 border border-[var(--rule)] hover:border-[var(--rule-2)] transition-colors"
-        >
-          <motion.span
-            layout
-            transition={{ type: "spring", stiffness: 500, damping: 34 }}
-            className="absolute top-[2px] w-[18px] h-[18px] rounded-full bg-vellum shadow-[var(--shadow-s)] grid place-items-center text-ink-2"
-            style={{ left: theme === "dark" ? "calc(100% - 20px)" : "2px" }}
-          >
-            {theme === "dark" ? <Icon.Moon /> : <Icon.Sun />}
-          </motion.span>
-        </button>
       </footer>
 
       <KeysModal open={keysOpen} onClose={() => setKeysOpen(false)} />
+      <ChunksDrawer open={chunksOpen} onClose={() => setChunksOpen(false)} />
     </aside>
   );
 }

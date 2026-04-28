@@ -70,3 +70,8 @@ export async function checkHealth() {
   const r = await fetch(`${BASE}/api/health`);
   return r.json();
 }
+
+export async function fetchChunks() {
+  const r = await fetch(`${BASE}/api/chunks`);
+  return r.json();
+}

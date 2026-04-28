@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -12,6 +13,7 @@ interface KeysData {
 }
 
 export function KeysModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [mounted, setMounted] = useState(false);
   const [keys, setKeys] = useState<KeysData>({
     gemini_api_key: "",
     openai_api_key: "",
@@ -19,6 +21,10 @@ export function KeysModal({ open, onClose }: { open: boolean; onClose: () => voi
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -47,13 +53,17 @@ export function KeysModal({ open, onClose }: { open: boolean; onClose: () => voi
     }
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   const fields = [
     { label: "Gemini", key: "gemini_api_key" as const, placeholder: "AIzaSy…", hint: "google.ai", type: "password" },
     { label: "OpenAI", key: "openai_api_key" as const, placeholder: "sk-…", hint: "platform.openai.com", type: "password" },
     { label: "LM Studio URL", key: "lm_studio_base_url" as const, placeholder: "http://localhost:1234/v1", hint: "local", type: "text" },
   ];
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -164,5 +174,6 @@ export function KeysModal({ open, onClose }: { open: boolean; onClose: () => voi
         </>
       )}
     </AnimatePresence>
+    , document.body
   );
 }

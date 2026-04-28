@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type ProviderMode = "local" | "cloud";
-export type Theme = "light" | "dark";
+export type Theme = "emerald" | "cyber" | "terminal" | "oled";
 
 export interface Message {
   id: string;
@@ -34,7 +34,36 @@ export interface FlashcardPayload {
   data: FlashcardItem[];
 }
 
+export interface ChatSession {
+  id: string;
+  title: string;
+  createdAt: number;
+  updatedAt: number;
+  messages: Message[];
+}
+
+const DEFAULT_SESSION: ChatSession = {
+  id: "session-default",
+  title: "Session 01",
+  createdAt: 0,
+  updatedAt: 0,
+  messages: [],
+};
+
+const themeCycle: Theme[] = ["emerald", "cyber", "terminal", "oled"];
+
+const buildSessionTitle = (content: string) => {
+  const normalized = content.replace(/^\/(mcq|flash)\s+/i, "").trim();
+  if (!normalized) return "New session";
+  const title = normalized.split(/\s+/).slice(0, 5).join(" ");
+  return title.length > 28 ? `${title.slice(0, 28).trimEnd()}…` : title;
+};
+
+const cloneDefaultSession = (): ChatSession => ({ ...DEFAULT_SESSION, messages: [] });
+
 interface AppState {
+  sessions: ChatSession[];
+  activeSessionId: string;
   messages: Message[];
   mode: ProviderMode;
   knowledgeScore: number;
@@ -42,6 +71,8 @@ interface AppState {
   theme: Theme;
 
   addMessage: (msg: Omit<Message, "id" | "timestamp">) => void;
+  startNewSession: () => void;
+  selectSession: (sessionId: string) => void;
   setMode: (mode: ProviderMode) => void;
   incrementScore: (by?: number) => void;
   setStreaming: (v: boolean) => void;
@@ -53,48 +84,117 @@ interface AppState {
 const applyTheme = (t: Theme) => {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
-  if (t === "dark") root.classList.add("dark");
-  else root.classList.remove("dark");
+  root.dataset.theme = t;
+  root.classList.toggle("dark", t !== "emerald");
 };
 
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
+      sessions: [cloneDefaultSession()],
+      activeSessionId: DEFAULT_SESSION.id,
       messages: [],
       mode: "cloud",
       knowledgeScore: 0,
       isStreaming: false,
-      theme: "light",
+      theme: "emerald",
 
       addMessage: (msg) =>
-        set((s) => ({
-          messages: [
-            ...s.messages,
-            { ...msg, id: crypto.randomUUID(), timestamp: Date.now() },
-          ],
-        })),
+        set((state) => {
+          const message = {
+            ...msg,
+            id: crypto.randomUUID(),
+            timestamp: Date.now(),
+          };
+
+          const sessions = state.sessions.length ? state.sessions : [cloneDefaultSession()];
+          const activeSessionId = state.activeSessionId || DEFAULT_SESSION.id;
+
+          const nextSessions = sessions.map((session) => {
+            if (session.id !== activeSessionId) {
+              return session;
+            }
+
+            const nextMessages = [...session.messages, message];
+            return {
+              ...session,
+              title: session.messages.length === 0 && msg.role === "user" ? buildSessionTitle(msg.content) : session.title,
+              messages: nextMessages,
+              updatedAt: message.timestamp,
+            };
+          });
+
+          return {
+            sessions: nextSessions,
+            messages: [...state.messages, message],
+          };
+        }),
+
+      startNewSession: () => {
+        const now = Date.now();
+        const session: ChatSession = {
+          id: crypto.randomUUID(),
+          title: "New session",
+          createdAt: now,
+          updatedAt: now,
+          messages: [],
+        };
+
+        set((state) => ({
+          sessions: [session, ...state.sessions],
+          activeSessionId: session.id,
+          messages: [],
+        }));
+      },
+
+      selectSession: (sessionId) => {
+        const session = get().sessions.find((item) => item.id === sessionId);
+        if (!session) return;
+        set({ activeSessionId: sessionId, messages: session.messages });
+      },
 
       setMode: (mode) => set({ mode }),
       incrementScore: (by = 10) =>
         set((s) => ({ knowledgeScore: s.knowledgeScore + by })),
       setStreaming: (v) => set({ isStreaming: v }),
-      clearChat: () => set({ messages: [] }),
+      clearChat: () => get().startNewSession(),
 
       setTheme: (t) => {
         applyTheme(t);
         set({ theme: t });
       },
       toggleTheme: () => {
-        const next: Theme = get().theme === "dark" ? "light" : "dark";
+        const currentIndex = themeCycle.indexOf(get().theme);
+        const next: Theme = themeCycle[(currentIndex + 1) % themeCycle.length];
         applyTheme(next);
         set({ theme: next });
       },
     }),
     {
       name: "omni-rag-store",
-      partialize: (s) => ({ knowledgeScore: s.knowledgeScore, theme: s.theme, mode: s.mode }),
+      partialize: (s) => ({
+        sessions: s.sessions,
+        activeSessionId: s.activeSessionId,
+        knowledgeScore: s.knowledgeScore,
+        theme: s.theme,
+        mode: s.mode,
+      }),
       onRehydrateStorage: () => (state) => {
-        if (state?.theme) applyTheme(state.theme);
+        if (state?.theme) {
+          applyTheme(state.theme);
+        }
+        if (state && (!state.sessions || state.sessions.length === 0)) {
+          state.sessions = [cloneDefaultSession()];
+          state.activeSessionId = DEFAULT_SESSION.id;
+          state.messages = [];
+        }
+        if (state && state.activeSessionId) {
+          const activeSession = state.sessions?.find((item) => item.id === state.activeSessionId) ?? state.sessions?.[0];
+          if (activeSession) {
+            state.activeSessionId = activeSession.id;
+            state.messages = activeSession.messages;
+          }
+        }
       },
     }
   )

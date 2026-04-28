@@ -22,7 +22,7 @@ const OPENER_TAIL = [
 ];
 
 export function ChatWorkspace() {
-  const { messages, mode, addMessage, isStreaming, setStreaming } = useStore();
+  const { messages, mode, addMessage, isStreaming, setStreaming, sessions, activeSessionId } = useStore();
   const [input, setInput] = useState("");
   // Deterministic initial values to avoid SSR hydration mismatch;
   // randomize on the client after mount.
@@ -30,6 +30,7 @@ export function ChatWorkspace() {
   const [opener, setOpener] = useState({ head: OPENER[0], tail: OPENER_TAIL[0] });
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const activeSessionTitle = sessions.find((session) => session.id === activeSessionId)?.title ?? "A Clean Page";
 
   useEffect(() => {
     setHint(HINTS[Math.floor(Math.random() * HINTS.length)]);
@@ -127,7 +128,7 @@ export function ChatWorkspace() {
             <span className="display-numeral text-xl text-ink-2 leading-none">I</span>
             <span className="text-ink-4">·</span>
             <span className="font-display text-[1.05rem] text-ink leading-none tracking-tight">
-              {messages.length === 0 ? "A Clean Page" : "In Conversation"}
+              {messages.length === 0 ? "A Clean Page" : activeSessionTitle}
             </span>
           </div>
           <div className="mt-1.5 flex items-center gap-3 text-[0.72rem] text-ink-3">

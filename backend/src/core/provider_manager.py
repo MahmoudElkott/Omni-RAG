@@ -161,14 +161,14 @@ class ProviderManager:
 
             lm_ok = await self.check_health("lm_studio")
             if lm_ok.alive:
-                model = preferred_model or "openai/qwen/qwen3-vl-4b"
+                model = preferred_model or "qwen/qwen3-vl-4b"
                 return model, {
                     "api_base": "http://localhost:1234/v1",
                     "api_key": "lm-studio",
                 }
 
             # fallback to cloud
-        return preferred_model or "gemini/gemini-2.0-flash", {}
+        return preferred_model or "gemini/gemini-3.0-flash", {}
 
     async def complete(
         self,
