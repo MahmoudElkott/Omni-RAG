@@ -41,7 +41,7 @@ Omni-RAG is a high-performance, full-stack Retrieval-Augmented Generation (RAG) 
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Mostafa1712002/Q-A.git
+git clone https://github.com/MahmoudElkott/Omni-RAG.git
 cd Q-A
 ```
 
